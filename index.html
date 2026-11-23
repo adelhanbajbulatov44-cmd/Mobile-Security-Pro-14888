@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Shield</title>
+<style>
+  *{box-sizing:border-box;user-select:none}
+  body{margin:0;font-family:sans-serif;background:#000;color:#fff;height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .shield{font-size:70px;margin-bottom:10px}
+  h1{font-size:24px;margin:0 0 10px}
+  p{color:#8d99ae;font-size:14px;margin:0 20px 30px}
+  #scan-btn{background:#e63946;color:#fff;border:none;padding:18px 40px;font-size:18px;font-weight:bold;border-radius:50px}
+  #progress-box{display:none;width:80%}
+  .bar-bg{background:#1c2541;height:14px;border-radius:10px;overflow:hidden;margin-top:15px}
+  #bar-fill{background:#06d6a0;width:0%;height:100%}
+  .alarm{animation:flash .25s infinite}
+  @keyframes flash{0%,100%{background:#590d22}50%{background:#ff0a54}}
+  .error-popup{position:fixed;width:260px;background:#ece9d8;color:#000;border:2px solid #0054e3;border-radius:6px;z-index:100;text-align:left;font-size:13px}
+  .error-header{background:#0058e6;color:#fff;padding:5px 8px;font-weight:bold}
+  .error-body{padding:12px}
+
+  #video-screen{display:none;position:fixed;inset:0;background:#000;z-index:999;pointer-events:none}
+  
+  /* Верхняя часть черного iPhone (облегченная для плавного видео) */
+  .iphone-top{position:absolute;top:0;left:0;right:0;height:36%;background:#000;z-index:1002;padding:12px 18px;display:flex;flex-direction:column;align-items:center}
+  .ios-status{width:100%;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;margin-bottom:10px}
+  .dynamic-island{width:110px;height:28px;background:#111;border:1px solid #222;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#06d6a0}
+  .banner{width:100%;margin-top:8px;background:#e63946;padding:12px;font-size:17px;font-weight:900;border-radius:16px;text-transform:uppercase}
+  
+  /* Облачко речи Гладиатора */
+  .speech-bubble{margin-top:10px;background:#fff;color:#000;padding:10px 16px;border-radius:18px;font-size:15px;font-weight:900;position:relative}
+  .speech-bubble::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);border-width:8px 8px 0;border-style:solid;border-color:#fff transparent transparent}
+
+  /* Плавное видео без тяжелых фильтров */
+  video{position:absolute;bottom:2%;left:-8%;width:105%;height:68%;object-fit:contain;object-position:left bottom}
+  
+  #battle{position:absolute;inset:0;z-index:1003;pointer-events:none}
+  .trojan{position:absolute;font-size:44px;transform:translate(-50%,-50%)}
+  .laser{position:absolute;height:8px;background:#fff;box-shadow:0 0 12px #00f5d4;transform-origin:0 50%;z-index:1004}
+  .boom{position:absolute;font-size:50px;transform:translate(-50%,-50%);z-index:1005}
+</style>
+</head>
+<body>
+  <div id="main-ui">
+    <div class="shield">🛡️</div>
+    <h1>Mobile Security Pro</h1>
+    <p>Обнаружены критические уязвимости системы. Требуется проверка.</p>
+    <button id="scan-btn" onclick="startScan()">НАЧАТЬ СКАНИРОВАНИЕ</button>
+    <div id="progress-box">
+      <div id="status">Проверка... 0%</div>
+      <div class="bar-bg"><div id="bar-fill"></div></div>
+    </div>
+  </div>
+
+  <div id="video-screen">
+    <div class="iphone-top">
+      <div class="ios-status">
+        <span>21:00</span>
+        <div class="dynamic-island">🛡️ FaceID Active</div>
+        <span>5G 🔋100%</span>
+      </div>
+      <div class="banner" id="banner">⚔️ ПОЛУЧАЙ, ТРОЯН!</div>
+      <div class="speech-bubble" id="speech">«Я ГЛАДИАТОР! Я ЗАЩИЩУ ТЕЛЕФОН!»</div>
+    </div>
+    <div id="battle"></div>
+    <video id="vid" src="gladiator.mp4" playsinline loop preload="auto"></video>
+  </div>
+
+<script>
+const errs=["КРИТИЧЕСКАЯ ОШИБКА: Троян обнаружен!","УТЕЧКА: Отправка фото в облако...","СБОЙ: Удаление /system","ВЗЛОМ: Камера перехвачена!","ПЕРЕГРЕВ БАТАРЕИ: 98°C"];
+function startScan(){
+  const vid=document.getElementById('vid');
+  vid.load();
+  document.getElementById('scan-btn').style.display='none';
+  document.getElementById('progress-box').style.display='block';
+  let p=0;
+  const t=setInterval(()=>{
+    p+=9;
+    if(p>=99){p=99;clearInterval(t);panic();}
+    document.getElementById('bar-fill').style.width=p+'%';
+    document.getElementById('status').innerText='Проверка... '+p+'%';
+  },120);
+}
+function panic(){
+  document.body.classList.add('alarm');
+  document.getElementById('status').innerText='ОБНАРУЖЕНО 148 ВИРУСОВ!';
+  let c=0;
+  const e=setInterval(()=>{
+    const d=document.createElement('div');
+    d.className='error-popup';
+    d.style.left=Math.random()*(window.innerWidth-270)+'px';
+    d.style.top=Math.random()*(window.innerHeight-120)+'px';
+    d.innerHTML='<div class="error-header">System Error</div><div class="error-body">❌ '+errs[c%errs.length]+'</div>';
+    document.body.appendChild(d);
+    if(++c>=10){clearInterval(e);setTimeout(win,1000);}
+  },300);
+}
+function win(){
+  document.querySelectorAll('.error-popup').forEach(x=>x.remove());
+  document.body.classList.remove('alarm');
+  document.getElementById('video-screen').style.display='block';
+  const vid=document.getElementById('vid');
+  vid.muted=false;
+  vid.play().catch(()=>{vid.muted=true;vid.play();});
+
+  const battle=document.getElementById('battle');
+  const targets=[];
+  for(let i=0;i<8;i++){
+    const m=document.createElement('div');
+    m.className='trojan';
+    m.innerText=i%2?'👾':'🦠';
+    m.style.left=(i%2?15:85)+'%';
+    m.style.top=(42+i*6.5)+'%';
+    battle.appendChild(m);
+    targets.push(m);
+  }
+  const s=setInterval(()=>{
+    if(!targets.length){
+      clearInterval(s);
+      const b=document.getElementById('banner');
+      b.style.background='#06d6a0';b.style.color='#000';
+      b.innerText='🛡️ ГЛАДИАТОР СПАС ТВОЙ ТЕЛЕФОН!';
+      document.getElementById('speech').innerText='💪 УГРОЗА ПОЛНОСТЬЮ ЛИКВИДИРОВАНА!';
+      return;
+    }
+    const trg=targets.shift();
+    const r=trg.getBoundingClientRect();
+    const sx=window.innerWidth*0.42,sy=window.innerHeight*0.62;
+    const ex=r.left+20,ey=r.top+20;
+    const l=document.createElement('div');
+    l.className='laser';
+    l.style.width=Math.hypot(ex-sx,ey-sy)+'px';
+    l.style.left=sx+'px';l.style.top=sy+'px';
+    l.style.transform='rotate('+Math.atan2(ey-sy,ex-sx)*180/Math.PI+'deg)';
+    battle.appendChild(l);
+    setTimeout(()=>{
+      trg.remove();
+      const bm=document.createElement('div');
+      bm.className='boom';bm.innerText='💥';
+      bm.style.left=ex+'px';bm.style.top=ey+'px';
+      battle.appendChild(bm);
+      setTimeout(()=>{l.remove();bm.remove();},300);
+    },120);
+  },500);
+}
+</script>
+</body>
+</html>
+
+
+
+
